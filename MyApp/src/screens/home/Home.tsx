@@ -32,7 +32,7 @@ export const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.text}>{msg}PRUEBAME1</Text>
+        <Text style={styles.text}>{msg}</Text>
       </View>
     </View>
   );
