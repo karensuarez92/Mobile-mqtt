@@ -25,13 +25,6 @@ export const Home = () => {
       const valor = parseFloat(message.toString());
       if (!isNaN(valor)) {
         setMsg(valor.toFixed(1));
-
-        // 🟢 guardar los últimos 10 valores
-        setData(prev => {
-          const nuevos = [...prev, valor];
-          if (nuevos.length > 5) nuevos.shift();
-          return nuevos;
-        });
       }
       //setMsg(message.toString());
       //setMsg(valor.toFixed(1));
