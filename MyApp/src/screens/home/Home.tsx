@@ -72,13 +72,8 @@ export const Home = () => {
         <Text style={styles.tempValue}>{msg ? `${msg} °C` : '--- °C'}</Text>
       </View>
 
-      {/* Histograma con colores dinámicos */}
-      <View style={styles.histContainer}>
-        <Text style={styles.histTitle}>Historial de Temperatura</Text>
-      </View>
-
-      <View>
-        <Text style={styles.humed}>Humedad</Text>
+      <View style={styles.sensorContainer}>
+        <Text style={styles.temp}>Humedad</Text>
       </View>
 
       <View style={styles.card2}>
@@ -89,6 +84,10 @@ export const Home = () => {
           style={{ paddingTop: 10 }}
         />
         <Text style={styles.tempValue}>{msg ? `${msg} °C` : '--- °C'}</Text>
+      </View>
+      {/* Histograma con colores dinámicos */}
+      <View style={styles.histContainer}>
+        <Text style={styles.histTitle}>Historial</Text>
       </View>
     </View>
   );
