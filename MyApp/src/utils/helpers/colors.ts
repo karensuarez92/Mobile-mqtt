@@ -1,6 +1,6 @@
 export const Colors = {
-  morado: '#800080',
-  white: '#fff',
-  mainBg: '#73b5f3ff',
-  cardBg: '#171418ff',
+  morado: 'rgba(30, 3, 81, 1)',
+  white: '#151313ff',
+  mainBg: '#89b7ecff',
+  //cardBg: '#0c0b0cff',
 };
