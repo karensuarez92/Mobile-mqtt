@@ -10,8 +10,22 @@ import LinearGradient from 'react-native-linear-gradient';
 const screenWidth = Dimensions.get('window').width;
 
 export const Home = () => {
-  const [msg, setMsg] = useState<string>('');
-  // const [data, setData] = useState<number[]>([]); // ✅ especificamos el tipo
+  const [msg, setMsg] = useState({
+    temp: '',
+    hum: '',
+  });
+
+  const findText = (text: string) => {
+    const regex = /Temp:\s*([\d.]+).*Hum:\s*([\d.]+)/;
+    const match = text.match(regex);
+    if (match) {
+      const temperatura = parseFloat(match[1]);
+      const humedad = parseFloat(match[2]);
+      return { temperatura, humedad };
+    } else {
+      return { temperatura: '0', humedad: '0' };
+    }
+  };
 
   useEffect(() => {
     const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
@@ -19,6 +33,7 @@ export const Home = () => {
     client.on('connect', () => {
       console.log('Conectado a HiveMQ por WS');
       client.subscribe('esp32/temperatura', error => {
+        console.log(error);
         if (!error) {
           client.publish('esp32/temperatura', 'Conectando...');
         }
@@ -26,14 +41,11 @@ export const Home = () => {
     });
 
     client.on('message', (topic, message) => {
-      const valor = parseFloat(message.toString());
-      if (!isNaN(valor)) {
-        setMsg(valor.toFixed());
-      }
-      //setMsg(message.toString());
-      //setMsg(valor.toFixed(1));
-
-      console.log(`📩 ${topic}: ${valor.toString()}`);
+      const parsedText = message.toString() ?? '0';
+      setMsg({
+        temp: findText(parsedText)?.temperatura.toString(),
+        hum: findText(parsedText)?.humedad.toString(),
+      });
     });
     return () => {
       client.end();
@@ -109,7 +121,7 @@ export const Home = () => {
           size={60}
           style={{ paddingTop: 10 }}
         />
-        <Text style={styles.tempValue}>{msg ? `${msg} °C` : '--- °C'}</Text>
+        <Text style={styles.tempValue}>{msg && `${msg.temp} °C`}</Text>
       </View>
 
       <View style={styles.sensorContainer}>
@@ -122,7 +134,7 @@ export const Home = () => {
           size={60}
           style={{ paddingTop: 10 }}
         />
-        <Text style={styles.tempValue}> %</Text>
+        <Text style={styles.tempValue}>{msg.hum} %</Text>
       </View>
       {/* Histograma con colores dinámicos */}
       <View style={styles.histContainer}>
