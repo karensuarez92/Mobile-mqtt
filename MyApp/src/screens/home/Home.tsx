@@ -87,8 +87,6 @@ export const Home = () => {
     },
   ];
 
-  // const barData = [{ value: 15 }, { value: 30 }, { value: 26 }, { value: 40 }];
-
   return (
     <LinearGradient
       colors={['#e2e5eaff', '#5d8dcbff', '#234dc0ff']} // Colores del gradiente
@@ -102,7 +100,7 @@ export const Home = () => {
         </Text>
       </View>
       <View style={{ width: '90%' }}>
-        <Image //resizeMode="contain"
+        <Image
           source={require('../../assets/image/iteshu.png')}
           style={{ width: '110%', height: 100 }}
         ></Image>
@@ -213,8 +211,5 @@ const styles = StyleSheet.create({
   },
   card3: {
     flexDirection: 'row',
-    //justifyContent: 'center',
-    //  alignItems: 'center',
-    //  marginTop: 20,
   },
 });
