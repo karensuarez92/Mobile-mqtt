@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import { Header } from '../Header/Header';
 import mqtt from 'mqtt';
 import { Colors } from '../../utils/helpers/colors';
+import { mqttConfig, sanitizeMqttPayload } from '../../utils/config/mqttConfig';
 
 export const Home = () => {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
-    const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
+    const client = mqtt.connect(mqttConfig.brokerUrl, {
+      username: mqttConfig.username,
+      password: mqttConfig.password,
+      // `mqtt.js` uses the native WebSocket/TLS implementation of the platform
+      // when connecting over `wss://`. Rejecting unauthorised certificates is
+      // the default; we set it explicitly so a future downgrade is obvious.
+      rejectUnauthorized: true,
+    });
     client.on('connect', () => {
-      console.log('Conectado a HiveMQ por WS');
-      client.subscribe('esp32/temperatura', error => {
+      client.subscribe(mqttConfig.topic, error => {
         if (!error) {
-          client.publish('esp32/temperatura', 'Conectando...');
+          client.publish(mqttConfig.topic, 'Conectando...');
         }
       });
     });
 
-    client.on('message', (topic, message) => {
-      setMsg(message.toString());
-      console.log(`📩 ${topic}: ${message.toString()}`);
+    client.on('message', (_topic, message) => {
+      const safe = sanitizeMqttPayload(message);
+      if (safe !== null) {
+        setMsg(safe);
+      }
     });
 
     return () => {
