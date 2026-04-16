@@ -1,37 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import { Header } from '../Header/Header';
-import mqtt from 'mqtt';
 import { Colors } from '../../utils/helpers/colors';
+import { commonStyles } from '../../utils/styles/commonStyles';
+import { MQTT_TOPICS } from '../../utils/mqtt/config';
+import { useMqttSubscription } from '../../hooks/useMqttSubscription';
 
 export const Home = () => {
-  const [msg, setMsg] = useState('');
-
-  useEffect(() => {
-    const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
-    client.on('connect', () => {
-      console.log('Conectado a HiveMQ por WS');
-      client.subscribe('esp32/temperatura', error => {
-        if (!error) {
-          client.publish('esp32/temperatura', 'Conectando...');
-        }
-      });
-    });
-
-    client.on('message', (topic, message) => {
-      setMsg(message.toString());
-      console.log(`📩 ${topic}: ${message.toString()}`);
-    });
-
-    return () => {
-      client.end();
-    };
-  }, []);
+  const msg = useMqttSubscription(MQTT_TOPICS.temperature, {
+    helloMessage: 'Conectando...',
+  });
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
+      <View style={commonStyles.card}>
         <Text style={styles.text}>{msg}</Text>
       </View>
     </View>
@@ -40,16 +22,9 @@ export const Home = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.mainBg,
+    ...commonStyles.screenContainer,
     paddingHorizontal: 12,
     paddingTop: 10,
-  },
-  card: {
-    borderRadius: 10,
-    width: '100%',
-    padding: 8,
-    backgroundColor: Colors.cardBg,
   },
   text: {
     fontSize: 20,
